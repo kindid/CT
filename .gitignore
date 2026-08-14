@@ -1,0 +1,5 @@
+.DS_Store
+*.o
+*.obj
+*.a
+test/ctest_test
