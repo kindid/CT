@@ -1,7 +1,10 @@
 // do what thou wilt shall be the whole of the law
 
-#ifndef CTEST_H
-#define CTEST_H
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <stdint.h>
 
@@ -51,4 +54,6 @@ void ctest_register(const char* name, void (*fn)(struct ctest_results* ctest_res
    } \
    static void ctest_fn_##name(struct ctest_results* ctest_results__)
 
-#endif // CTEST_H
+#ifdef __cplusplus
+}
+#endif
