@@ -14,7 +14,7 @@ any `.c` file that includes `ctest.h` and links against `libctest.a`:
 
 ctest_dcl(bob) {
    ctest_assert_true(1);
-   ctest_assert_eq_int(2, 2);
+   ctest_assert_eq_s32(2, 2);
 }
 ```
 
@@ -39,14 +39,26 @@ Available assertions:
 
 ```c
 ctest_assert_true(cond)
-ctest_assert_eq_int(expected, actual)
-ctest_assert_eq_u32(expected, actual)
+ctest_assert_false(cond)
+ctest_assert_eq(expected, actual)       // C11 _Generic: picks the width/type of `actual`
+ctest_assert_eq_s8/u8/s16/u16/s32/u32/s64/u64(expected, actual)
+ctest_assert_eq_f32(expected, actual)       // exact, bit-for-bit
+ctest_assert_eq_f64(expected, actual)       // exact, bit-for-bit
 ctest_assert_eq_f32_eps(expected, actual, eps)
 ctest_assert_eq_f64_eps(expected, actual, eps)
-ctest_assert_eq_str(expected, actual)   // NULL-safe
-ctest_assert_neq_str(expected, actual)  // NULL-safe
+ctest_assert_eq_str(expected, actual)   // strcmp, NULL-safe
+ctest_assert_neq_str(expected, actual)  // strcmp, NULL-safe
 ctest_fail(fmt, ...)                    // unconditional, printf-style
 ```
+
+`ctest_assert_eq()` dispatches on the type of `actual`: integer types compare
+exactly, `float`/`double` compare bit-for-bit (use the `_eps` forms for a
+tolerance), and **any pointer** type compares by **pointer identity** -- for
+`char*`/`const char*` that means it does *not* `strcmp`, so reach for
+`ctest_assert_eq_str()` when you want a content comparison. ``_Generic`` does no
+implicit conversion when selecting, so arbitrary pointer types are caught by a
+`default:` arm (they convert to `const void*` at the call); a non-pointer type
+with no explicit case fails to compile.
 
 `ctest_current_test_name()` returns the name of the test currently running,
 useful for assertions or diagnostics that want to reference it:

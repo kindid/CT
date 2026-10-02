@@ -5,7 +5,7 @@
 
 ctest_dcl(bob) {
    ctest_assert_true(1);
-   ctest_assert_eq_int(2, 2);
+   ctest_assert_eq_s32(2, 2);
 }
 
 ctest_dcl(anna) {
@@ -31,6 +31,34 @@ ctest_dcl(milo) {
 
 ctest_dcl(ned) {
    ctest_assert_eq_str("ned", ctest_current_test_name());
+}
+
+// Exercises the C11 _Generic ctest_assert_eq() dispatch across the integer,
+// floating-point and pointer type cases, plus the exact (non-eps) float
+// comparisons. All comparisons here are expected to pass.
+ctest_dcl(generic_eq) {
+   int i = 42;
+   long l = -7;
+   unsigned int u = 7u;
+   unsigned long long big = 0x100000000ull;
+   float f = 0.5f;
+   double d = 0.25;
+   const char* s = "hello";
+   int arr[2] = {0, 0};
+   int* p = arr;
+
+   ctest_assert_eq(42, i);
+   ctest_assert_eq(-7L, l);
+   ctest_assert_eq(7u, u);
+   ctest_assert_eq(0x100000000ull, big);
+   ctest_assert_eq(0.5f, f);
+   ctest_assert_eq(0.25, d);
+   ctest_assert_eq(s, s); // char*/const char* in _Generic compares pointers, not contents
+   ctest_assert_eq(p, p); // any other pointer type is caught by the _Generic default arm
+
+   // Exact float comparisons: values that must be produced bit-for-bit.
+   ctest_assert_eq_f32(0.0f, f - 0.5f);
+   ctest_assert_eq_f64(1.0, d * 4.0);
 }
 
 // Simple passing tests with overlapping name prefixes, used to exercise
