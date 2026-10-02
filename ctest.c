@@ -114,21 +114,39 @@ void ctest_assert_true_impl(struct ctest_results* ctest_results__, int cond, con
    }
 }
 
-void ctest_assert_eq_int_impl(struct ctest_results* ctest_results__, int32_t expected, int32_t actual, const char* file, int line)
+void ctest_assert_eq_s64_impl(struct ctest_results* ctest_results__, int64_t expected, int64_t actual, const char* file, int line)
 {
    assert(ctest_results__ != NULL);
    ctest_results__->assertions += 1u;
    if (expected != actual) {
-      ctest_failf(ctest_results__, file, line, "assert int failed: expected=%d actual=%d", (int)expected, (int)actual);
+      ctest_failf(ctest_results__, file, line, "assert eq (signed) failed: expected=%lld actual=%lld", (long long)expected, (long long)actual);
    }
 }
 
-void ctest_assert_eq_u32_impl(struct ctest_results* ctest_results__, uint32_t expected, uint32_t actual, const char* file, int line)
+void ctest_assert_eq_u64_impl(struct ctest_results* ctest_results__, uint64_t expected, uint64_t actual, const char* file, int line)
 {
    assert(ctest_results__ != NULL);
    ctest_results__->assertions += 1u;
    if (expected != actual) {
-      ctest_failf(ctest_results__, file, line, "assert u32 failed: expected=%u actual=%u", expected, actual);
+      ctest_failf(ctest_results__, file, line, "assert eq (unsigned) failed: expected=%llu actual=%llu", (unsigned long long)expected, (unsigned long long)actual);
+   }
+}
+
+void ctest_assert_eq_f32_impl(struct ctest_results* ctest_results__, float expected, float actual, const char* file, int line)
+{
+   assert(ctest_results__ != NULL);
+   ctest_results__->assertions += 1u;
+   if (expected != actual) {
+      ctest_failf(ctest_results__, file, line, "assert f32 (exact) failed: expected=%0.9g actual=%0.9g", (double)expected, (double)actual);
+   }
+}
+
+void ctest_assert_eq_f64_impl(struct ctest_results* ctest_results__, double expected, double actual, const char* file, int line)
+{
+   assert(ctest_results__ != NULL);
+   ctest_results__->assertions += 1u;
+   if (expected != actual) {
+      ctest_failf(ctest_results__, file, line, "assert f64 (exact) failed: expected=%0.17g actual=%0.17g", expected, actual);
    }
 }
 
@@ -166,6 +184,15 @@ void ctest_assert_neq_str_impl(struct ctest_results* ctest_results__, const char
    ctest_results__->assertions += 1u;
    if (ctest_str_eq(expected, actual)) {
       ctest_failf(ctest_results__, file, line, "assert neq_str failed: both equal \"%s\"", expected ? expected : "(null)");
+   }
+}
+
+void ctest_assert_eq_ptr_impl(struct ctest_results* ctest_results__, const void* expected, const void* actual, const char* file, int line)
+{
+   assert(ctest_results__ != NULL);
+   ctest_results__->assertions += 1u;
+   if (expected != actual) {
+      ctest_failf(ctest_results__, file, line, "assert eq (pointer) failed: expected=%p actual=%p", (void*)expected, (void*)actual);
    }
 }
 
