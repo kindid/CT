@@ -1,4 +1,4 @@
-# ctest
+# CT - C Test
 
 A minimal, dependency-free C11 unit test framework. Tests self-register at
 startup (via a GCC/Clang constructor attribute), so there's no test-list to
